@@ -22,6 +22,10 @@ FILE_FORMAT = "{series_name} s{season:02}e{episode:02} {episode_name}"
 def label_episodes(series, directory, season):
     episodes = season_information(series)
 
+    if season not in episodes:
+        print "No information found for season {}.".format(season)
+        return
+
     files = os.listdir(directory)
     files.sort()
 
@@ -32,18 +36,19 @@ def label_episodes(series, directory, season):
 
     for f in files:
         if e >= len(episodes[s]):
-            e = 0
-            s += 1
-            print "Moving on to season {}...".format(s)
-
-        if s not in episodes:
-            print "Error: No information on season {} exists."
-            return
+            if s + 1 in episodes:
+                e = 0
+                s += 1
+                print "Moving on to season {}...".format(s)
+            else:
+                print "Unable to rename {}: no episodes remain.".format(f)
+                rename.append((f, None))
+                continue
 
         ext = re.search(r"\.[^\.]+$",f)
         if not ext:
             print 'Warning: Unable to determine file type for "{}".'.format(f)
-            rename.append((f, f))
+            rename.append((f, None))
             continue
 
         ext = ext.group(0)
@@ -57,9 +62,6 @@ def label_episodes(series, directory, season):
 
         e += 1
 
-    print "{} episodes were identified in seasons {} through {}.".format(
-          len(files), season, s)
-
     choice = menu("Confirm New File Names", *zip(*rename),
                   headers=["Current Name", "New Name"],
                   input_range=["yes", "y", "no", "n"], footer="Would you like "
@@ -69,8 +71,11 @@ def label_episodes(series, directory, season):
         return
 
     for r in rename:
-        print "Renaming {} to {}...".format(*r)
-        os.rename(*r)
+        if r[1]:
+            print "Renaming {} to {}...".format(*r)
+            os.rename(*r)
+        else:
+            print "Skipping {}...".format(r[0])
 
     print "Done."
 
