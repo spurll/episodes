@@ -5,19 +5,17 @@
 # TO DO:
 #   Make season_information a separate module.
 #   Either add file types to ignore or file types to include (not whole dir).
-#   Currently, viewing "season 0" of something doesn't seem to work...
-#   Make episodes and seasons 2-digit, zero-padded (test with Daily Show, which
-#     has four-digit "seaons").
+#   Add directories by season (using os.renames, with constant for format).
 
 
 import argparse, urllib2, os, re, datetime, random, xml.etree.ElementTree as et
 from table import table, menu
 
 
-WORD_SEPARATOR = " "        # Replaces all spaces with this character.
-DATE_FORMAT = "{:%Y}"       # Alternate: "{:%d %B %Y}"
-DESCRIPTION_LIMIT = 80      # Number of characters to display.
-FILE_FORMAT = "{series_name} s{season}e{episode} {episode_name}"
+WORD_SEPARATOR = " "            # Replaces all spaces with this character.
+DESCRIPTION_LIMIT = 80          # Number of characters to display.
+DATE_FORMAT = "{:%d %B %Y}"     # For viewing air date in season information.
+FILE_FORMAT = "{series_name} s{season:02}e{episode:02} {episode_name}"
 
 KEY = "F6C8EF890E843081"
 MIRROR_URL = "http://thetvdb.com/api/{key}/mirrors.xml"
@@ -60,8 +58,8 @@ def season_information(series):
             name = grab(series[i], "SeriesName")
             aired = grab(series[i], "FirstAired")
             if aired is not None:
-                aired = DATE_FORMAT.format(datetime.datetime.strptime(aired,
-                                           "%Y-%m-%d"))
+                aired = "{:%Y}".format(datetime.datetime.strptime(aired,
+                                       "%Y-%m-%d"))
             rows.append((i + 1, name, aired))
 
         choice = menu("Matches", *zip(*rows), headers=["#", "Series Name",
@@ -82,6 +80,8 @@ def season_information(series):
     episodes = [{"season": grab(e, "SeasonNumber", int),
                 "episode": grab(e, "EpisodeNumber", int),
                 "name": grab(e, "EpisodeName"),
+                "date": grab(e, "FirstAired", lambda d: DATE_FORMAT.format(
+                             datetime.datetime.strptime(d, "%Y-%m-%d"))),
                 "description": grab(e, "Overview")}
                 for e in root.findall("Episode")]
 
@@ -109,11 +109,12 @@ def season_information(series):
                  " continue.)", input_range=season_list+[""])
         if s:
             s = int(s)
-            rows = [(e["episode"], e["name"],
+            rows = [(e["episode"], e["name"], e["date"],
                     short_description(e["description"])) for e in episodes[s]]
             #print rows
             menu("Season {}".format(s), *zip(*rows), headers=["Episode",
-                 "Name", "Description"], footer="ENTER to continue.")
+                 "Name", "Air Date", "Description"],
+                 footer="ENTER to continue.")
         else:
             done = True
 
@@ -144,29 +145,36 @@ def label_episodes(series, directory, season):
         ext = re.search(r"\.[^\.]+$",f)
         if not ext:
             print 'Warning: Unable to determine file type for "{}".'.format(f)
-            rename += f
+            rename.append((f, f))
             continue
 
         ext = ext.group(0)
         file_name = FILE_FORMAT.format(series_name=series, season=s,
                                        episode=episodes[s][e]["episode"],
                                        episode_name=episodes[s][e]["name"])
+        file_name = file_name.replace(" ", WORD_SEPARATOR)
         file_name = "".join([file_name, ext])
-        rename.append(file_name)
+        file_name = os.path.join(directory, file_name)
+        rename.append((os.path.join(directory, f), file_name))
 
         e += 1
 
     print "{} episodes were identified in seasons {} through {}.".format(
           len(files), season, s)
 
-    menu("Confirm New File Names", files, rename, headers=["Current Name",
-         "New Name"], input_range=["yes", "y", "no", "n"], footer="Would you "
-         "like to proceed with renaming the files? (yes/no)")
+    choice = menu("Confirm New File Names", *zip(*rename),
+                  headers=["Current Name", "New Name"],
+                  input_range=["yes", "y", "no", "n"], footer="Would you like "
+                  "to proceed with renaming the files? (yes/no)")
 
+    if choice[0] == "n":
+        return
 
+    for r in rename:
+        print "Renaming {} to {}...".format(*r)
+        os.rename(*r)
 
-    # List EVERY file rename (and episodes/seasons remaining afterward) and ask
-    # the user to confirm.
+    print "Done."
 
 
 def grab(parent, child, convert=None):
@@ -179,10 +187,11 @@ def grab(parent, child, convert=None):
 
 
 def short_description(description):
-    description = description.replace("\n", " ")
-    if len(description) > DESCRIPTION_LIMIT:
-        description = description[0:DESCRIPTION_LIMIT-2]
-        description = re.sub(r"\W+\w*$", r"...", description)
+    if description:
+        description = description.replace("\n", " ")
+        if len(description) > DESCRIPTION_LIMIT:
+            description = description[0:DESCRIPTION_LIMIT-2]
+            description = re.sub(r"\W+\w*$", r"...", description)
     return description
 
 
