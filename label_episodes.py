@@ -10,13 +10,15 @@
 #   Add directories by season (using os.renames, with constant for format).
 
 
-import argparse, os, re 
+import argparse, os, re, string
 from table import table, menu
 from season_information import season_information
 
 
-WORD_SEPARATOR = " "            # Replaces all spaces with this character.
 FILE_FORMAT = "{series_name} s{season:02}e{episode:02} {episode_name}"
+
+RESERVED_CHARACTERS = r'/\?%*:|"<>' # These are removed from file names.
+WORD_SEPARATOR = " "                # Spaces are replaced by this character.
 
 
 def label_episodes(series, directory, season):
@@ -51,13 +53,8 @@ def label_episodes(series, directory, season):
             rename.append((f, None))
             continue
 
-        ext = ext.group(0)
-        file_name = FILE_FORMAT.format(series_name=series, season=s,
-                                       episode=episodes[s][e]["episode"],
-                                       episode_name=episodes[s][e]["name"])
-        file_name = file_name.replace(" ", WORD_SEPARATOR)
-        file_name = "".join([file_name, ext])
-        file_name = os.path.join(directory, file_name)
+        file_name = create_file_name(series, episodes[s][e], directory,
+                                     ext.group(0))
         rename.append((os.path.join(directory, f), file_name))
 
         e += 1
@@ -78,6 +75,25 @@ def label_episodes(series, directory, season):
             print "Skipping {}...".format(r[0])
 
     print "Done."
+
+
+def create_file_name(series, episode, directory, extension):
+    file_name = FILE_FORMAT.format(series_name=series,
+                                   season=episode["season"],
+                                   episode=episode["episode"],
+                                   episode_name=episode["name"])
+
+    # Remove reserved characters (and spaces, if necessary)
+    if len(WORD_SEPARATOR) == 1:
+        translator = string.maketrans(" ", WORD_SEPARATOR)
+    else:
+        translator = None
+    file_name = file_name.translate(translator, RESERVED_CHARACTERS)
+
+    file_name = "".join([file_name, extension])
+    file_name = os.path.join(directory, file_name)
+
+    return file_name
 
 
 if __name__ == "__main__":
