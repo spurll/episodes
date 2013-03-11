@@ -53,9 +53,8 @@ def label_episodes(series, directory, season):
             rename.append((f, None))
             continue
 
-        file_name = create_file_name(series, episodes[s][e], directory,
-                                     ext.group(0))
-        rename.append((os.path.join(directory, f), file_name))
+        file_name = create_file_name(series, episodes[s][e], ext.group(0))
+        rename.append((f, file_name))
 
         e += 1
 
@@ -70,14 +69,15 @@ def label_episodes(series, directory, season):
     for r in rename:
         if r[1]:
             print "Renaming {} to {}...".format(*r)
-            os.rename(*r)
+            os.rename(os.path.join(directory, r[0]), os.path.join(directory,
+                r[1]))
         else:
             print "Skipping {}...".format(r[0])
 
     print "Done."
 
 
-def create_file_name(series, episode, directory, extension):
+def create_file_name(series, episode, extension):
     file_name = FILE_FORMAT.format(series_name=series,
                                    season=episode["season"],
                                    episode=episode["episode"],
@@ -89,9 +89,7 @@ def create_file_name(series, episode, directory, extension):
     else:
         translator = None
     file_name = file_name.translate(translator, RESERVED_CHARACTERS)
-
     file_name = "".join([file_name, extension])
-    file_name = os.path.join(directory, file_name)
 
     return file_name
 
