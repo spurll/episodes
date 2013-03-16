@@ -8,6 +8,7 @@
 #   Either add file types to ignore or file types to include (not whole dir).
 #     (At the very least, exclude directories!)
 #   Add directories by season (using os.renames, with constant for format).
+#   Add support for "missing" episodes (skip them).
 
 
 import argparse, os, re, string
@@ -21,7 +22,7 @@ RESERVED_CHARACTERS = r'/\?%*:|"<>' # These are removed from file names.
 WORD_SEPARATOR = " "                # Spaces are replaced by this character.
 
 
-def label_episodes(series, directory, season):
+def label_episodes(series, directory, season, episode):
     episodes = season_information(series)
 
     if season not in episodes:
@@ -32,7 +33,7 @@ def label_episodes(series, directory, season):
     files.sort()
 
     rename = []
-    s, e = season, 0
+    s, e = season, episode
     print 'Found {} episodes in directory "{}".'.format(len(files), directory)
     print "Identifying episodes in season {}...".format(s)
 
@@ -105,8 +106,11 @@ if __name__ == "__main__":
                         "media files. (All files will be renamed!) Defaults to"
                         "present working directory.", default="./")
     parser.add_argument("-s", "--season", help="The season at which to begin "
-                        "episode enumeration. Defaults to the first season.",
+                        "episode enumeration. Defaults to the season one.",
                         type=int, default=1)
+    parser.add_argument("-e", "--episode", help="The episode at which to begin"
+                        " enumeration. Defaults to episode one of the "
+                        "specified season.", type=int, default=1)
     args = parser.parse_args()
 
-    label_episodes(" ".join(args.series), args.dir, args.season)
+    label_episodes(" ".join(args.series), args.dir, args.season, args.episode)
