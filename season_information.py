@@ -15,13 +15,24 @@ from table import table, menu
 DATE_FORMAT = "{:%d %B %Y}"     # For viewing air date in season information.
 DESCRIPTION_LIMIT = 80          # Number of characters to display.
 
+DVD_S = "DVD_season"            # XML identifier for DVD season number.
+DVD_E = "DVD_episodenumber"     # XML identifier for DVD episode number.
+SEASON = "SeasonNumber"         # XML identifier for (aired) season number.
+EPISODE = "EpisodeNumber"       # XML identifier for (aired) episode number.
+EPISODE_NAME = "EpisodeName"    # XML identifier for episode name.
+AIR_DATE = "FirstAired"         # XML identifier for air date.
+DESCRIPTION = "Overview"        # XML identifier for episode description.
+
+DATE_CONVERSION = lambda d: DATE_FORMAT.format(datetime.datetime.strptime(d,
+                                               "%Y-%m-%d"))
+
 KEY = "F6C8EF890E843081"
 MIRROR_URL = "http://thetvdb.com/api/{key}/mirrors.xml"
 SERIES_URL = '{mirror}/api/GetSeries.php?seriesname="{name}"'
 EPISODE_URL = "{mirror}/api/{key}/series/{series_id}/all/en.xml"
 
 
-def season_information(series):
+def season_information(series, dvd):
     # Randomly selects a mirror to connect to.
     response = urllib2.urlopen(MIRROR_URL.format(key=KEY))
     xml = response.read()
@@ -75,13 +86,26 @@ def season_information(series):
     xml = response.read()
     root = et.fromstring(xml)
 
-    episodes = [{"season": grab(e, "SeasonNumber", int),
-                "episode": grab(e, "EpisodeNumber", int),
-                "name": grab(e, "EpisodeName"),
-                "date": grab(e, "FirstAired", lambda d: DATE_FORMAT.format(
-                             datetime.datetime.strptime(d, "%Y-%m-%d"))),
-                "description": grab(e, "Overview")}
+    episodes = [{"season": grab(e, SEASON, int),
+                "episode": grab(e, EPISODE, int),
+                "dvd_season": grab(e, DVD_S, int),
+                "dvd_episode": grab(e, DVD_E, int),
+                "name": grab(e, EPISODE_NAME),
+                "date": grab(e, AIR_DATE, DATE_CONVERSION),
+                "description": grab(e, DESCRIPTION)}
                 for e in root.findall("Episode")]
+
+    if dvd:
+        dvd_episodes = [{"season": e["dvd_season"],
+                        "episode": e["dvd_episode"],
+                        "name": e["name"],
+                        "date": e["date"],
+                        "description": e["description"]}
+                        for e in episodes if e["dvd_season"] is not None and
+                        e["dvd_episode"] is not None]
+
+        # If no DVD information is defined, just use the aired information.
+        if dvd_episodes: episodes = dvd_episodes
 
     # Show table of seasons, with the number of episodes in them.
     episodes.sort(key=lambda e: e["episode"])
@@ -123,8 +147,15 @@ def grab(parent, child, convert=None):
     child = parent.find(child)
     if child is not None: child = child.text
     if child is not None:
-        if convert: child = convert(child)
-        else: child = child.encode("utf-8")     # Important. Watch for Unicode.
+        if convert:
+            if convert == int and "." in child:
+                # Why would an episode number be stored as a float?
+                # Because fuck you, that's why.
+                child = int(float(child))
+            else:
+                child = convert(child)
+        else:
+            child = child.encode("utf-8")     # Important. Watch for Unicode.
     return child
 
 
@@ -143,6 +174,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument("series", help="The name of the television series.",
                         nargs="+")
+    parser.add_argument("-v", "--dvd", help="List episodes by DVD order, if "
+                        "available.", action="store_true")
     args = parser.parse_args()
 
-    season_information(" ".join(args.series))
+    season_information(" ".join(args.series), args.dvd)

@@ -22,8 +22,8 @@ RESERVED_CHARACTERS = r'/\?%*:|"<>' # These are removed from file names.
 WORD_SEPARATOR = " "                # Spaces are replaced by this character.
 
 
-def label_episodes(series, directory, season, episode):
-    episodes = season_information(series)
+def label_episodes(series, directory, season, episode, dvd):
+    episodes = season_information(series, dvd)
 
     if season not in episodes:
         print "No information found for season {}.".format(season)
@@ -111,6 +111,9 @@ if __name__ == "__main__":
     parser.add_argument("-e", "--episode", help="The episode at which to begin"
                         " enumeration. Defaults to episode one of the "
                         "specified season.", type=int, default=1)
+    parser.add_argument("-v", "--dvd", help="List episodes by DVD order, if "
+                        "available.", action="store_true")
     args = parser.parse_args()
 
-    label_episodes(" ".join(args.series), args.dir, args.season, args.episode)
+    label_episodes(" ".join(args.series), args.dir, args.season, args.episode,
+                   args.dvd)
