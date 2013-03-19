@@ -20,6 +20,7 @@ FILE_FORMAT = "{series_name} s{season:02}e{episode:02} {episode_name}"
 
 RESERVED_CHARACTERS = r'/\?%*:|"<>' # These are removed from file names.
 WORD_SEPARATOR = " "                # Spaces are replaced by this character.
+REPLACE = ("/", "&")                # First characters replaced with second.
 
 
 def label_episodes(series, directory, season, episode, dvd):
@@ -33,7 +34,7 @@ def label_episodes(series, directory, season, episode, dvd):
     files.sort()
 
     rename = []
-    s, e = season, episode
+    s, e = season, episode - 1
     print 'Found {} episodes in directory "{}".'.format(len(files), directory)
     print "Identifying episodes in season {}...".format(s)
 
@@ -84,11 +85,13 @@ def create_file_name(series, episode, extension):
                                    episode=episode["episode"],
                                    episode_name=episode["name"])
 
+    if REPLACE:
+        translator = string.maketrans(*REPLACE)
+        file_name = file_name.translate(translator, "")
+
     # Remove reserved characters (and spaces, if necessary)
-    if len(WORD_SEPARATOR) == 1:
-        translator = string.maketrans(" ", WORD_SEPARATOR)
-    else:
-        translator = None
+    translator = string.maketrans(" ", WORD_SEPARATOR)
+
     file_name = file_name.translate(translator, RESERVED_CHARACTERS)
     file_name = "".join([file_name, extension])
 
