@@ -5,10 +5,10 @@
 # http://thetvdb.com/wiki/index.php?title=Programmers_API
 
 # TO DO:
-#   Either add file types to ignore or file types to include (not whole dir).
-#     (At the very least, exclude directories!)
 #   Add directories by season (using os.renames, with constant for format).
 #   Add support for "missing" episodes (skip them).
+#   Add support fo linked files (subtitle files); if they have the same name,
+#     but different extension.
 
 
 import argparse, os, re, string
@@ -17,6 +17,8 @@ from season_information import season_information
 
 
 FILE_FORMAT = "{series_name} s{season:02}e{episode:02} {episode_name}"
+FILE_TYPES = {'.aaf', '.3gp', '.asf', '.avcd', '.avi', '.flv', '.mpg', '.mpeg',
+              '.mpe', '.m4v', '.mkv', '.mov', '.ogg', '.swf', '.wmv'}
 
 RESERVED_CHARACTERS = r'/\?%*:|"<>' # These are removed from file names.
 WORD_SEPARATOR = " "                # Spaces are replaced by this character.
@@ -31,11 +33,20 @@ def label_episodes(series, directory, season, episode, dvd):
         return
 
     files = os.listdir(directory)
+
+    # Remove directories and files that don't match the pattern, if any.
+    files = [f for f in files if os.path.isfile(os.path.join(directory, f)) and
+             extension(f) in FILE_TYPES]
+
+    if len(files) < 1:
+        print 'Found no media files in "{}".'.format(directory)
+        return
+
     files.sort()
 
     rename = []
     s, e = season, episode - 1
-    print 'Found {} episodes in directory "{}".'.format(len(files), directory)
+    print 'Found {} media files in "{}".'.format(len(files), directory)
     print "Identifying episodes in season {}...".format(s)
 
     for f in files:
@@ -49,13 +60,7 @@ def label_episodes(series, directory, season, episode, dvd):
                 rename.append((f, None))
                 continue
 
-        ext = re.search(r"\.[^\.]+$",f)
-        if not ext:
-            print 'Warning: Unable to determine file type for "{}".'.format(f)
-            rename.append((f, None))
-            continue
-
-        file_name = create_file_name(series, episodes[s][e], ext.group(0))
+        file_name = create_file_name(series, episodes[s][e], extension(f))
         rename.append((f, file_name))
 
         e += 1
@@ -77,6 +82,12 @@ def label_episodes(series, directory, season, episode, dvd):
             print "Skipping {}...".format(r[0])
 
     print "Done."
+
+
+def extension(f):
+    ext = re.search(r"\.[^\.]+$", f)
+    if ext: ext = ext.group(0)
+    return ext
 
 
 def create_file_name(series, episode, extension):
