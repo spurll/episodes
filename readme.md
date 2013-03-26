@@ -24,10 +24,12 @@ Renames media files in a directory to correspond to the episode list of a televi
 Positional:
 * The name of the television series.
 
-Flags:
+Options:
 * -d, --dir: The directory containing the media files. Defaults to present working directory.
 * -s, --season: The season at which to begin episode enumeration. Defaults to season one.
 * -e, --episode: The episode at which to begin enumeration. Defaults to episode one of the specified season.
+
+Flags:
 * -v, --dvd: List episodes by DVD order instead of aired order (if available).
 
 ### More Information
