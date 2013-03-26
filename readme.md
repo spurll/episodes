@@ -51,7 +51,7 @@ The label_episodes.py program will only rename files with the following extensio
 Files will be named in the following format:
 
 ```Python
-{series_name} s{season:02}e{episode:02} {episode_name}
+FORMAT = "{series_name} s{season:02}e{episode:02} {episode_name}"
 ```
 
 Bugs and Feature Requests
@@ -67,7 +67,7 @@ Feature Requests
 Known Bugs
 ----------
 
-* Fix bug in table.py where UTF-8 encoded unicode messes with the character count.
+* UTF-8 encoded unicode (common with TheTVDB.com) messes with the character count in tables displayed by season_information.py.
 
 TheTVDB.com
 ===========
