@@ -36,7 +36,7 @@ def label_episodes(series, directory, season, episode, dvd):
 
     # Remove directories and files that don't match the pattern, if any.
     files = [f for f in files if os.path.isfile(os.path.join(directory, f)) and
-             extension(f) in FILE_TYPES]
+             extension(f).lower() in FILE_TYPES]
 
     if len(files) < 1:
         print 'Found no media files in "{}".'.format(directory)
