@@ -49,9 +49,10 @@ The label_episodes.py program will only rename files with the following extensio
 * .wmv
 
 Files will be named in the following format:
-'''Python
+
+```Python
 {series_name} s{season:02}e{episode:02} {episode_name}
-'''
+```
 
 Bugs and Feature Requests
 =========================
