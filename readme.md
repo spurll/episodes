@@ -56,6 +56,17 @@ Files will be named in the following format:
 FORMAT = "{series_name} s{season:02}e{episode:02} {episode_name}"
 ```
 
+unpack.py
+-----------------
+
+This one's mostly just for me. It walks a directory tree and unpacks all RAR files it finds. Useful if your private tracker (or whatever) insists on putting every episode of something in its own RAR file in its own subdirectory.
+
+### Arguments
+
+Options:
+* -d, --dir: The root directory at which to begin looking for RARs. Defaults to present working directory.
+* -t, --target: The directory in which to place the unpacked files. Defaults to the aforementioned directory. (Not implemented yet!)
+
 Bugs and Feature Requests
 =========================
 
@@ -65,6 +76,7 @@ Feature Requests
 * Add directories by season (using os.renames, with constant for format).
 * Add support for episodes that are "missing" (the user doesn't have the file: skip them in enumeration/labeling).
 * Add support fo linked files (subtitle files, for example): if they have the same name, but different extension, treat them as a unit.
+* For unpack.py, add support for specifying a target directory for the unpacked files.
 
 Known Bugs
 ----------

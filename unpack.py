@@ -1,6 +1,9 @@
 # Written by Gem Newman. This work is licensed under a Creative Commons
 # Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 
+# TO DO:
+#   Add support for target directories. Move things out of PWD at the least.
+
 
 import argparse, os, re, subprocess
 from label_episodes import extension
