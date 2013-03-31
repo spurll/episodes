@@ -8,16 +8,16 @@ from label_episodes import extension
 
 #def unpack(directory, target):
 def unpack(directory):
-    for root, dirs, files in os.walk('python/Lib/email'):
+    for root, dirs, files in os.walk(directory):
         for f in files:
             if extension(f).lower() == ".rar":
                 rar = os.path.join(root, f)
                 print "Unpacking {}...".format(rar),
-                code = subprocess.call("unrar", "e", rar)
+                code = subprocess.call(["unrar", "e", rar])
                 if code != 0:
-                    print " Error!"
+                    print "Error!"
                 else:
-                    print " Done."
+                    print "Done."
                     #print "Moving {} to {}."
 
 
@@ -34,4 +34,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
 #    label_episodes(args.dir, args.target if args.target else args.dir)
-    label_episodes(args.dir)
+    unpack(args.dir)
