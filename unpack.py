@@ -11,7 +11,7 @@ def unpack(directory, target):
     target = os.path.expanduser(target)
 
     # Calling "unrar e" will unpack to PWD, so...
-    os.path.chdir(target)
+    os.chdir(target)
 
     for root, dirs, files in os.walk(directory):
         for f in files:
