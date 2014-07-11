@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Written by Gem Newman. This work is licensed under a Creative Commons
 # Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 
@@ -17,8 +19,8 @@ from season_information import season_information
 
 
 FILE_FORMAT = "{series_name} s{season:02}e{episode:02} {episode_name}"
-FILE_TYPES = {'.aaf', '.3gp', '.asf', '.avcd', '.avi', '.flv', '.mpg', '.mpeg',
-              '.mpe', '.m4v', '.mkv', '.mov', '.ogg', '.swf', '.wmv'}
+FILE_TYPES = {'.aaf', '.3gp', '.asf', '.avcd', '.avi', '.divx', '.flv', '.mpg',
+              '.mpeg', '.mpe', '.m4v', '.mkv', '.mov', '.ogg', '.swf', '.wmv'}
 
 RESERVED_CHARACTERS = r'/\?%*:|"<>' # These are removed from file names.
 WORD_SEPARATOR = " "                # Spaces are replaced by this character.
