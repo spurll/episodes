@@ -17,7 +17,7 @@ Flags:
 label_episodes.py
 -----------------
 
-Renames media files in a directory to correspond to the episode list of a television show. (Useful when you want to correctly label episodes from ripped DVDs for use in Plex, for example.) Episode information is scraped from TheTVDB.com, via season_information.py.
+Renames media files in a directory to correspond to the episode list of a television show. (Useful when you want to correctly label episodes from ripped DVDs for use in Plex, for example.) Episode information is scraped from TheTVDB.com, via `season_information.py`.
 
 ### Arguments
 
@@ -34,7 +34,7 @@ Flags:
 
 ### More Information
 
-The label_episodes.py program will only rename files with the following extensions:
+The `label_episodes.py` program will only rename files with the following extensions:
 
 * .aaf
 * .3gp
@@ -57,7 +57,7 @@ FORMAT = "{series_name} s{season:02}e{episode:02} {episode_name}"
 ```
 
 unpack.py
------------------
+---------
 
 This one's mostly just for me. It walks a directory tree and unpacks all RAR files it finds. Useful if your private tracker (or whatever) insists on putting every episode of something in its own RAR file in its own subdirectory. There are definitely more powerful (and more useful) tools out there, but this happens to be exactly what I need, so... meh.
 
@@ -80,18 +80,16 @@ Feature Requests
 Known Bugs
 ----------
 
-* UTF-8 encoded unicode (common with TheTVDB.com) messes with the character count in tables displayed by season_information.py.
+* UTF-8 encoded unicode (common with TheTVDB.com) messes with the character count in tables displayed by `season_information.py`.
 
 TheTVDB.com
 ===========
 
-All season and episode information is provided via TheTVDB.com; please consider contributing to that project. For more information about TheTVDB.com's API, visit:
-http://thetvdb.com/wiki/index.php?title=Programmers_API
+All season and episode information is provided via [TheTVDB.com](http://thetvdb.com); please consider contributing to that project. You can find more information about TheTVDB.com's API [here](http://thetvdb.com/wiki/index.php?title=Programmers_API).
 
 License Information
 ===================
 
-Written by Gem Newman.
-http://www.startleddisbelief.com
+Written by Gem Newman. [GitHub](https://github.com/spurll/) | [Blog](http://www.startleddisbelief.com) | [Twitter](https://twitter.com/spurll)
 
-This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+This work is licensed under Creative Commons [BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/).
