@@ -81,6 +81,7 @@ Known Bugs
 ----------
 
 * UTF-8 encoded unicode (common with TheTVDB.com) messes with the character count in tables displayed by `season_information.py`.
+* It looks like season_information.py crashes when TheTVDB.com returns no search results. That's an embarassingly trivial error.
 
 TheTVDB.com
 ===========
