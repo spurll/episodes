@@ -19,8 +19,8 @@ from season_information import season_information
 
 
 FILE_FORMAT = "{series_name} s{season:02}e{episode:02} {episode_name}"
-FILE_TYPES = {'.aaf', '.3gp', '.asf', '.avcd', '.avi', '.divx', '.flv', '.mpg',
-              '.mpeg', '.mpe', '.m4v', '.mkv', '.mov', '.ogg', '.swf', '.wmv'}
+FILE_TYPES = {'.avi', '.divx', '.flv', '.mpg', '.mpeg', '.m4v', '.mp4', '.mkv',
+              '.mov', '.ogg', '.swf', '.wmv'}
 
 RESERVED_CHARACTERS = r'/\?%*:|"<>' # These are removed from file names.
 WORD_SEPARATOR = " "                # Spaces are replaced by this character.
