@@ -6,12 +6,6 @@
 # For more information about TheTVDB.com's API, visit
 # http://thetvdb.com/wiki/index.php?title=Programmers_API
 
-# TO DO:
-#   Add directories by season (using os.renames, with constant for format).
-#   Add support for "missing" episodes (skip them).
-#   Add support fo linked files (subtitle files); if they have the same name,
-#     but different extension.
-
 
 import argparse, os, re, string
 from table import table, menu
@@ -27,7 +21,7 @@ WORD_SEPARATOR = " "                # Spaces are replaced by this character.
 REPLACE = ("/", "&")                # First characters replaced with second.
 
 
-def label_episodes(series, directory, season, episode, dvd):
+def label_episodes(series, directory, season, episode, missing, dvd):
     episodes = season_information(series, dvd)
 
     if season not in episodes:
@@ -52,6 +46,10 @@ def label_episodes(series, directory, season, episode, dvd):
     print "Identifying episodes in season {}...".format(s)
 
     for f in files:
+        # Skip any episodes that are marked as "missing"
+        while e + 1 in missing:
+            e += 1
+
         if e >= len(episodes[s]):
             if s + 1 in episodes:
                 e = 0
@@ -127,9 +125,12 @@ if __name__ == "__main__":
     parser.add_argument("-e", "--episode", help="The episode at which to begin"
                         " enumeration. Defaults to episode one of the "
                         "specified season.", type=int, default=1)
-    parser.add_argument("-v", "--dvd", help="List episodes by DVD order, if "
-                        "available.", action="store_true")
+    parser.add_argument("-m", "--missing", help="A list of episodes for which "
+                        "files are missing. These episode numbers will be "
+                        "skipped.", type=int, nargs="*", default=[])
+    parser.add_argument("-v", "--dvd", help="Use DVD instead of aired order, "
+                        "if available.", action="store_true")
     args = parser.parse_args()
 
     label_episodes(" ".join(args.series), args.dir, args.season, args.episode,
-                   args.dvd)
+                   args.missing, args.dvd)

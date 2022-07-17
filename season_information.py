@@ -29,7 +29,7 @@ SERIES_URL = 'https://thetvdb.com/api/GetSeries.php?seriesname="{name}"'
 EPISODE_URL = "https://thetvdb.com/api/{key}/series/{series_id}/all/en.xml"
 
 
-def season_information(series, dvd):
+def season_information(series, dvd, display=True):
     # Identify the series by name, and retrieve its ID from TheTVDB.com.
     print "Search: {}".format(series)
 
@@ -112,8 +112,7 @@ def season_information(series, dvd):
                 for s in season_list}
 
     # Optionally display episode information for each season.
-    done = False
-    while not done:
+    while display:
         s = menu("Season Information", season_list, [len(episodes[s]) for s in
                  season_list], headers=["Season", "Episodes"],
                  footer="Enter a season number for more information. (ENTER to"
@@ -126,7 +125,7 @@ def season_information(series, dvd):
                  "Name", "Air Date", "Description"],
                  footer="ENTER to continue.")
         else:
-            done = True
+            display = False
 
     return episodes
 
