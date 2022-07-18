@@ -1,8 +1,3 @@
-# KNOWN BUGS:
-#   Columns don't line up properly when unicode characters (encoded as UTF-8)
-#   are passed in. If these are the "longest" items, it may also mess up column
-#   width, but that's not really a big deal.
-
 def menu(title, *items, **options):
     """
     Creates a menu, asking the user to select an option, then returns that
@@ -41,11 +36,15 @@ def table(title, *columns, **options):
     headers = options["headers"] if "headers" in options.keys() else None
     footer = options["footer"] if "footer" in options.keys() else None
 
-    column_widths = [max(max([len(str(item)) for item in c]), 1) for c in
-                     columns]
+    column_widths = [
+        max(max([len(str(item).decode('utf-8')) for item in c]), 1)
+        for c in columns
+    ]
+
     if headers:
-        column_widths = [max(w) for w in zip(column_widths, [len(h) for h in
-                         headers])]
+        column_widths = [
+            max(w) for w in zip(column_widths, [len(h) for h in headers])
+        ]
 
     total_width = sum(column_widths) + (3 * (len(column_widths) - 1))
     if total_width < len(title):
@@ -62,15 +61,19 @@ def table(title, *columns, **options):
     print "+{}+".format("+".join(dividers))
 
     if headers:
-        cells = [" {:{}} |".format(*column_width) for column_width in
-                 zip(headers, column_widths)]
-        print "".join(["|"] + cells)
+        cells = [
+            cell_str(*column_and_width)
+            for column_and_width in zip(headers, column_widths)
+        ]
+        print "".join(cells + ["|"])
         print "+{}+".format("+".join(dividers))
 
     for row in rows:
-        cells = [" {:{}} |".format(*column_width) for column_width in zip(row,
-                 column_widths)]
-        print "".join(["|"] + cells)
+        cells = [
+            cell_str(*column_and_width)
+            for column_and_width in zip(row, column_widths)
+        ]
+        print "".join(cells + ["|"])
 
     print "+{}+".format("+".join(dividers))
 
@@ -78,3 +81,6 @@ def table(title, *columns, **options):
         print footer
 
 
+# Fix misalignment due to Unicode characters
+def cell_str(s, width):
+    return "| " + s + " " * (1 + width - len(str(s).decode('utf-8')))
