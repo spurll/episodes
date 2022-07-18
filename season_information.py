@@ -29,7 +29,7 @@ SERIES_URL = 'https://thetvdb.com/api/GetSeries.php?seriesname="{name}"'
 EPISODE_URL = "https://thetvdb.com/api/{key}/series/{series_id}/all/en.xml"
 
 
-def season_information(series, dvd, display=True):
+def season_information(series, dvd, display=False):
     # Identify the series by name, and retrieve its ID from TheTVDB.com.
     print "Search: {}".format(series)
 
