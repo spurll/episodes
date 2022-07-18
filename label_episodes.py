@@ -100,8 +100,7 @@ def label_episodes(series, directory, start, missing, dvd):
             )
 
             skip = map(int, selection.replace(",", " ").split())
-            for s in skip:
-                files.pop(s - 1)
+            files = [f for i, f in enumerate(files) if i + 1 not in skip]
 
         elif choice == "r":
             source = menu(
