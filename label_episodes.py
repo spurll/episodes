@@ -215,7 +215,7 @@ if __name__ == "__main__":
                         nargs="+")
     parser.add_argument("-d", "--dir", help="The directory containing the "
                         "media files. (All files will be renamed!) Defaults to"
-                        "present working directory.", default="./")
+                        " present working directory.", default="./")
     parser.add_argument("-s", "--start", help="The season and episode at which"
                         " to begin enumeration in S##E## format. Defaults to "
                         "S01E01", default="S01E01")

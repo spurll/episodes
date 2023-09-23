@@ -83,4 +83,4 @@ def table(title, *columns, **options):
 
 # Fix misalignment due to Unicode characters
 def cell_str(s, width):
-    return "| " + s + " " * (1 + width - len(str(s).decode('utf-8')))
+    return "| {}".format(s) + " " * (1 + width - len(str(s).decode('utf-8')))
