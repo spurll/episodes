@@ -165,4 +165,4 @@ if __name__ == "__main__":
                         "available.", action="store_true")
     args = parser.parse_args()
 
-    season_information(" ".join(args.series), args.dvd)
+    season_information(" ".join(args.series), args.dvd, display=True)
