@@ -7,7 +7,7 @@
 # http://thetvdb.com/wiki/index.php?title=Programmers_API
 
 
-import argparse, os, re, string
+import argparse, os, re
 from os.path import join
 from table import table, menu
 from season_information import season_information
@@ -117,7 +117,7 @@ def label_episodes(series, directory, start, missing, dvd):
             destination = None
             print("Which index would you like to move it to?")
             while not destination in index + [""]:
-                destination = raw_input(">> ")
+                destination = input(">> ")
 
             if destination == "": continue
 
@@ -194,13 +194,13 @@ def create_file_name(series, episode, extension):
                                    episode_name=episode["name"])
 
     if REPLACE:
-        translator = string.maketrans(*REPLACE)
-        file_name = file_name.translate(translator, "")
+        translator = str.maketrans(*REPLACE)
+        file_name = file_name.translate(translator)
 
-    # Remove reserved characters (and spaces, if necessary)
-    translator = string.maketrans(" ", WORD_SEPARATOR)
+    # Remove spaces and reserved characters
+    translator = str.maketrans(" ", WORD_SEPARATOR, RESERVED_CHARACTERS)
+    file_name = file_name.translate(translator)
 
-    file_name = file_name.translate(translator, RESERVED_CHARACTERS)
     file_name = "".join([file_name, extension])
 
     return file_name
