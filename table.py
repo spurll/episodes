@@ -17,9 +17,9 @@ def menu(title, *items, **options):
 
     table(title, *items, headers=headers, footer=footer)
 
-    choice = raw_input(">> ")
+    choice = input(">> ")
     while input_range and not choice in input_range:
-        choice = raw_input(">> ")
+        choice = input(">> ")
 
     return choice
 
@@ -37,7 +37,7 @@ def table(title, *columns, **options):
     footer = options["footer"] if "footer" in options.keys() else None
 
     column_widths = [
-        max(max([len(str(item).decode('utf-8')) for item in c]), 1)
+        max(max([len(str(item)) for item in c]), 1)
         for c in columns
     ]
 
@@ -54,33 +54,33 @@ def table(title, *columns, **options):
 
     rows = zip(*columns)
 
-    print "+{}+".format("-" * (total_width + 2))
-    print "| {:^{}} |".format(title, total_width)
+    print("+{}+".format("-" * (total_width + 2)))
+    print("| {:^{}} |".format(title, total_width))
 
     dividers = ["-" * (w + 2) for w in column_widths]
-    print "+{}+".format("+".join(dividers))
+    print("+{}+".format("+".join(dividers)))
 
     if headers:
         cells = [
             cell_str(*column_and_width)
             for column_and_width in zip(headers, column_widths)
         ]
-        print "".join(cells + ["|"])
-        print "+{}+".format("+".join(dividers))
+        print("".join(cells + ["|"]))
+        print("+{}+".format("+".join(dividers)))
 
     for row in rows:
         cells = [
             cell_str(*column_and_width)
             for column_and_width in zip(row, column_widths)
         ]
-        print "".join(cells + ["|"])
+        print("".join(cells + ["|"]))
 
-    print "+{}+".format("+".join(dividers))
+    print("+{}+".format("+".join(dividers)))
 
     if footer:
-        print footer
+        print(footer)
 
 
 # Fix misalignment due to Unicode characters
 def cell_str(s, width):
-    return "| {}".format(s) + " " * (1 + width - len(str(s).decode('utf-8')))
+    return "| {}".format(s) + " " * (1 + width - len(str(s)))

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Written by Gem Newman. This work is licensed under a Creative Commons
 # Attribution-NonCommercial-ShareAlike 3.0 Unported License.
@@ -19,12 +19,12 @@ def unpack(directory, target):
         for f in files:
             if extension(f).lower() == ".rar":
                 rar = os.path.join(root, f)
-                print "Unpacking {} to {}...".format(rar, target),
+                print(f"Unpacking {rar} to {target}...")
                 code = subprocess.call(["unrar", "e", rar])
                 if code != 0:
-                    print "Error!"
+                    print("Error!")
                 else:
-                    print "Done."
+                    print("Done.")
 
 
 if __name__ == "__main__":

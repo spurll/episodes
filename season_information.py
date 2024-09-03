@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Written by Gem Newman. This work is licensed under a Creative Commons
 # Attribution-NonCommercial-ShareAlike 3.0 Unported License.
@@ -31,7 +31,7 @@ EPISODE_URL = "https://thetvdb.com/api/{key}/series/{series_id}/all/en.xml"
 
 def season_information(series, dvd, display=False):
     # Identify the series by name, and retrieve its ID from TheTVDB.com.
-    print "Search: {}".format(series)
+    print(f"Search: {series}")
 
     series = series.replace(" ", "%20")
     header = {"User-Agent": "Season Information"}
@@ -39,7 +39,7 @@ def season_information(series, dvd, display=False):
     # Retrieve series information.
     response = requests.get(SERIES_URL.format(name=series), headers=header)
 
-    xml = response.text.encode("utf-8")
+    xml = response.text
     root = et.fromstring(xml)
 
     series = root.findall("Series")
@@ -50,12 +50,12 @@ def season_information(series, dvd, display=False):
 
     else:
         rows = []
-        for i in xrange(len(series)):
+        for i in range(len(series)):
             name = grab(series[i], "SeriesName")
             aired = grab(series[i], "FirstAired")
             if aired is not None:
                 aired = "{:%Y}".format(datetime.datetime.strptime(aired,
-                                       "%Y-%m-%d"))
+                  "%Y-%m-%d"))
             rows.append((i + 1, name, aired))
 
         choice = menu("Matches", *zip(*rows), headers=["#", "Series Name",
@@ -64,14 +64,14 @@ def season_information(series, dvd, display=False):
         series_id = grab(series[int(choice) - 1], "seriesid")
         series_name = grab(series[int(choice) - 1], "SeriesName")
 
-    print "Series Name: {}".format(series_name)
-    print "Series ID: {}".format(series_id)
+    print(f"Series Name: {series_name}")
+    print(f"Series ID: {series_id}")
 
     # Retrieve the episode list for the series.
     response = requests.get(EPISODE_URL.format(key=KEY, series_id=series_id),
         headers=header)
 
-    xml = response.text.encode("utf-8")
+    xml = response.text
     root = et.fromstring(xml)
 
     episodes = [{"season": grab(e, SEASON, int),
@@ -141,8 +141,7 @@ def grab(parent, child, convert=None):
                 child = int(float(child))
             else:
                 child = convert(child)
-        else:
-            child = child.encode("utf-8")     # Important. Watch for Unicode.
+
     return child
 
 

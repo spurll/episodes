@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Written by Gem Newman. This work is licensed under a Creative Commons
 # Attribution-NonCommercial-ShareAlike 3.0 Unported License.
@@ -30,7 +30,7 @@ def label_episodes(series, directory, start, missing, dvd):
     episodes = season_information(series, dvd)
 
     if start[0] not in episodes:
-        print "No information found for season {}.".format(start[0])
+        print(f"No information found for season {start[0]}.")
         return
 
     files = os.listdir(directory)
@@ -40,10 +40,10 @@ def label_episodes(series, directory, start, missing, dvd):
              extension(f).lower() in FILE_TYPES]
 
     if len(files) < 1:
-        print 'Found no media files in "{}".'.format(directory)
+        print(f'Found no media files in "{directory}".')
         return
 
-    print 'Found {} media files in "{}".'.format(len(files), directory)
+    print(f'Found {len(files)} media files in "{directory}".')
 
     files.sort()
 
@@ -69,10 +69,10 @@ def label_episodes(series, directory, start, missing, dvd):
         if choice == "":
             for r in rename:
                 if r[2]:
-                    print "Renaming {} to {}...".format(r[1], r[2])
+                    print(f"Renaming {r[1]} to {r[2]}...")
                     os.rename(join(directory, r[1]), join(directory, r[2]))
                 else:
-                    print "Skipping {}...".format(r[0])
+                    print(f"Skipping {r[0]}...")
             done = True
 
         elif choice in ("q", "x"):
@@ -115,7 +115,7 @@ def label_episodes(series, directory, start, missing, dvd):
             if source == "": continue
 
             destination = None
-            print "Which index would you like to move it to?"
+            print("Which index would you like to move it to?")
             while not destination in index + [""]:
                 destination = raw_input(">> ")
 
@@ -123,14 +123,14 @@ def label_episodes(series, directory, start, missing, dvd):
 
             files.insert(int(destination) - 1, files.pop(int(source) - 1))
 
-    print "Done."
+    print("Done.")
 
 
 def files2episodes(series, episodes, files, missing, start):
     rename = []
     s, e = start
 
-    print "Identifying episodes in season {}...".format(s)
+    print(f"Identifying episodes in season {s}...")
 
     for f in files:
         # Skip any episodes that are marked as "missing"
@@ -142,9 +142,9 @@ def files2episodes(series, episodes, files, missing, start):
             if s + 1 in episodes:
                 e = 1
                 s += 1
-                print "Moving on to season {}...".format(s)
+                print(f"Moving on to season {s}...")
             else:
-                print "Unable to rename {}: no episodes remain.".format(f)
+                print(f"Unable to rename {f}: no episodes remain.")
                 rename.append(('S{:02}E{:02}'.format(s, e), f, None))
                 continue
 
