@@ -1,3 +1,5 @@
+import re
+
 def menu(title, *items, **options):
     """
     Creates a menu, asking the user to select an option, then returns that
@@ -83,4 +85,5 @@ def table(title, *columns, **options):
 
 # Fix misalignment due to Unicode characters
 def cell_str(s, width):
+    s = re.sub(r'[\n\r\s]+', ' ', str(s))
     return "| {}".format(s) + " " * (1 + width - len(str(s)))
